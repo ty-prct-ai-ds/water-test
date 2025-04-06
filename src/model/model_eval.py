@@ -58,9 +58,9 @@ def save_metrics(metrics:dict, file_path:str) -> None:
 #     json.dump(metrics_dict, file, indent=4)
 
 def main():
-    model_path = "model.pkl"
+    model_path = "models/model.pkl"
     test_data_path = "./data/processed/test_processed.csv"
-    metrics_path = "metrics.json"
+    metrics_path = "reports/metrics.json"
 
     try:
         test_data = load_data(test_data_path)

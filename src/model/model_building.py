@@ -50,11 +50,12 @@ def save_model(model:RandomForestClassifier, file_path:str) -> None:
 # pickle.dump(clf, open("model.pkl", "wb"))
 
 def main():
-    params_path = "params.yaml"
-    data_path = "./data/processed/train_processed.csv"
-    model_name = "model.pkl"
-    
     try:
+        params_path = "params.yaml"
+        data_path = "./data/processed/train_processed.csv"
+        model_name = "models/model.pkl"
+    
+    
         n_estimators = load_params(params_path)
         train_data = load_data(data_path)
         X_train, y_train = prepare_data(train_data)
