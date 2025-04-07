@@ -3,6 +3,9 @@ import numpy as np
 import pickle
 import json
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from dvclive import Live
+import yaml
+
 
 def load_data(file_path:str) -> pd.DataFrame:
     try:
@@ -29,14 +32,27 @@ def load_model(file_path:str) -> object:
         raise Exception(f"Error loading model from {file_path}: {e}")
 # model = pickle.load(open("model.pkl", "rb"))
 
-def evaluate_model(model:object, X:pd.DataFrame, y:pd.Series) -> dict:
+def evaluate_model(model:object, X_test:pd.DataFrame, y_test:pd.Series) -> dict:
     try:
-        y_pred = model.predict(X)
-        acc = accuracy_score(y, y_pred)
-        pre = precision_score(y, y_pred)
-        rec = recall_score(y, y_pred)
-        f1 = f1_score(y, y_pred)
+        params = yaml.safe_load(open("params.yaml","r"))
+        test_size = params["data_collection"]["test_size"]
+        n_estimators = params["model_building"]["n_estimators"]
+        
+        y_pred = model.predict(X_test)
+        acc = accuracy_score(y_test, y_pred)
+        pre = precision_score(y_test, y_pred)
+        rec = recall_score(y_test, y_pred)
+        f1 = f1_score(y_test, y_pred)
 
+        with Live(save_dvc_exp = True) as live:
+            live.log_metric("accuracy", acc)
+            live.log_metric("precision", pre)
+            live.log_metric("recall", rec)
+            live.log_metric("f1_score", f1)
+            
+            live.log_param("test_size", test_size)
+            live.log_param("n_estimators", n_estimators)
+        
         metrics_dict = {
             "accuracy": acc,
             "precision": pre,
